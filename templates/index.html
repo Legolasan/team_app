@@ -1,0 +1,93 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="card shadow-sm mb-4">
+    <div class="card-header bg-primary text-white">
+        <h5 class="mb-0">New Task</h5>
+    </div>
+    <div class="card-body">
+        <form method="POST" class="mb-4">
+        <div class="mb-3">
+            <label class="form-label">Subject</label>
+            <input type="text" name="subject" class="form-control" required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Description</label>
+            <textarea name="description" class="form-control" rows="3"></textarea>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Start Date</label>
+            <input type="date" name="start_date" class="form-control">
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Due Date</label>
+            <input type="date" name="due_date" class="form-control">
+        </div>
+
+        <div class="mb-3">
+        <label class="form-label">Stakeholders</label>
+            <input type="text" name="stakeholders" class="form-control" placeholder="Comma-separated names" pattern="^[A-Za-z,\s]+$" title="Only alphabets and commas allowed" required>
+        </div>
+
+        <div class="mb-3">
+        <label class="form-label">Impact</label>
+            <select name="impact" class="form-select" required>
+                <option value="">-- Select Impact --</option>
+                <option value="High">High</option>
+                <option value="Medium">Medium</option>
+                <option value="Low">Low</option>
+            </select>
+        </div>
+
+        <div class="d-flex gap-2 mt-4">
+            <button type="submit" class="btn btn-primary">Add Task</button>
+            <a href="/archived" class="btn btn-outline-secondary">View Completed Tasks</a>
+        </div>
+    </form>
+    </div>
+</div>
+<div class="card">
+    <div class="card-header bg-secondary text-white">
+        <h5 class="mb-0">Active Tasks</h5>
+    </div>
+    <div class="card-body p-0">
+        <table class="table table-striped mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Subject</th>
+                    <th>Due</th>
+                    <th>Impact</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for task in tasks %}
+                <tr>
+                    <td>{{ task.subject }}</td>
+                    <td>{{ task.due_date.strftime('%Y-%m-%d') if task.due_date }}</td>
+                    <td>
+                        <span class="badge
+                            {% if task.impact == 'High' %} bg-danger
+                            {% elif task.impact == 'Medium' %} bg-warning text-dark
+                            {% else %} bg-success
+                            {% endif %}">
+                            {{ task.impact }}
+                        </span>
+                    </td>
+                    <td>
+                        <a href="/edit/{{ task.id }}" class="btn btn-sm btn-outline-primary">Edit</a>
+                        <a href="/archive/{{ task.id }}" class="btn btn-sm btn-outline-success"
+                           onclick="return confirm('Mark as complete?');">Complete</a>
+                        <a href="/delete/{{ task.id }}" class="btn btn-sm btn-outline-danger"
+                           onclick="return confirm('Delete this task?');">Delete</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
